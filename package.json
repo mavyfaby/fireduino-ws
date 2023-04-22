@@ -1,0 +1,35 @@
+{
+  "name": "fireduino-ws",
+  "version": "1.0.0-pre.1",
+  "description": "Fireduino Real-time TCP/IP Web Socket Server",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "echo 'no test'",
+    "build": "tsc",
+    "dev": "ts-node-dev --respawn --pretty --transpile-only src/index.ts",
+    "start": "NODE_ENV=production node dist/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mavyfaby/fireduino-ws.git"
+  },
+  "keywords": [
+    "nodejs",
+    "realtime",
+    "socketio"
+  ],
+  "author": "Maverick Fabroa, Christine Lange, Jewel Cedrick Gesim",
+  "license": "SEE LICENSE FILE",
+  "bugs": {
+    "url": "https://github.com/mavyfaby/fireduino-ws/issues"
+  },
+  "homepage": "https://github.com/mavyfaby/fireduino-ws#readme",
+  "dependencies": {
+    "socket.io": "^4.6.1"
+  },
+  "devDependencies": {
+    "@types/node": "^18.15.13",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.0.4"
+  }
+}
