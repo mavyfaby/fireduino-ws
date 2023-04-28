@@ -4,8 +4,9 @@
   "description": "Fireduino Real-time TCP/IP Web Socket Server",
   "main": "dist/index.js",
   "scripts": {
-    "test": "echo 'no test'",
     "build": "tsc",
+    "test-cloud": "ts-node-dev test/index.ts",
+    "test": "ts-node-dev test/index.ts --dev",
     "dev": "ts-node-dev --respawn --pretty --transpile-only src/index.ts",
     "start": "NODE_ENV=production node dist/index.js"
   },
@@ -29,6 +30,7 @@
   },
   "devDependencies": {
     "@types/node": "^18.15.13",
+    "socket.io-client": "^4.6.1",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.0.4"
   }

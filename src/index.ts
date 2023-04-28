@@ -9,6 +9,11 @@ const port = process.env.PORT || 5000;
 io.on("connection", (socket) => {
     // Log new connection
     console.log("New connection!", socket.id);
+
+    // Listen for "data" event
+    socket.on("data", (data) => {
+        console.log("Data received:", data);
+    });
 });
 
 // Listen for connections
