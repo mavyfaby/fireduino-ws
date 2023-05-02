@@ -7,10 +7,10 @@ process.argv.splice(0, 2);
 const isDev = process.argv.length > 0 && process.argv[0] === "--dev";
 // Get endpoint
 const endpoint = isDev ? "http://localhost:5000" : "https://fireduino-ws.azurewebsites.net";
-// Get dummy device id
-const uid = process.argv.length > 1 ? process.argv[1] : "1234567890";
-// Get user input
+// Get establishment id
 const estb = prompt()(">> Enter establishment id: ");
+// Get serial id
+const uid = prompt()(">> Enter serial id: ");
 
 // Create socket.io client
 const socket = io(endpoint + "/estb" + estb);

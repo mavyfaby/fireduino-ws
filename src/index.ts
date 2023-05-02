@@ -78,6 +78,12 @@ fetchEstablishments((establishments) => {
         return;
       });
 
+      // Listen for "get_online_fireduinos" event
+      socket.on("get_online_fireduinos", () => {
+        // Emit "get_online_fireduinos" event
+        socket.emit("get_online_fireduinos", session.getDevices());
+      });
+
       // Listen for add event
       session.subscribe("fireduino_connect", () => {
         // Emit "fireduino_connect" event to the establishment
