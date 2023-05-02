@@ -1,6 +1,6 @@
 {
   "name": "fireduino-ws",
-  "version": "1.0.0-pre.3",
+  "version": "1.0.0-pre.4",
   "description": "Fireduino Real-time TCP/IP Web Socket Server",
   "main": "dist/index.js",
   "scripts": {

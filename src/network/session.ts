@@ -1,17 +1,15 @@
-import { SessionEvent } from "../classes/event";
 import type { Device, SessionType } from "../types";
 
 /**
  * This class is used to store connected fireduino uids
  */
-export class Session extends SessionEvent {
+export class Session {
   private static devices: Device[] = [];
   private static mobileInstance: Session;
   private static fireduinoInstance: Session;
   private type: SessionType;
 
   private constructor(type: SessionType) {
-    super();
     this.type = type;
   }
 
@@ -57,8 +55,6 @@ export class Session extends SessionEvent {
     if (!this.has(uid)) {
       // Add uid
       Session.devices.push({ type: this.type, socketId, uid });
-      // Emit add event
-      this.emit("fireduino_connect");
       // Return true
       return true;
     }
@@ -73,10 +69,16 @@ export class Session extends SessionEvent {
   public remove(uid: string): boolean {
     // Check if uid is added
     if (this.has(uid)) {
-      // Remove uid
-      Session.devices = Session.devices.filter((device) => device.type === this.type && device.uid !== uid);
-      // Emit remove event
-      this.emit("fireduino_disconnect");
+      // For each device
+      for (const device of Session.devices) {
+        // If device type is not fireduino, continue
+        if (device.type !== "fireduino") continue;
+        // If device uid is not equal to uid, continue
+        if (device.uid !== uid) continue;
+        // Remove device
+        Session.devices.splice(Session.devices.indexOf(device), 1);
+      }
+      
       // Return true
       return true;
     }

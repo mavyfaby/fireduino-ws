@@ -36,13 +36,16 @@ fetchEstablishments((establishments) => {
         // Log connection
         console.log("[+] Fireduino connected:", uid);
         // Add uid to session
-        session.add(socket.id, uid);
+        if (session.add(socket.id, uid)) {
+          // Emit "fireduino_connect" event to the establishment
+          nsp.emit("fireduino_connect", session.getDevices());
+        }
       });
 
       // Listen for "fireduino_chk" event
-      socket.on("fireduino-check", (uid) => {
+      socket.on("fireduino_check", (uid) => {
         // Emit "fireduino_check" event
-        socket.emit("fireduino-check", session.has(uid));
+        socket.emit("fireduino_check", session.has(uid));
       });
 
       // Listen for "disconnect" event
@@ -67,7 +70,11 @@ fetchEstablishments((establishments) => {
           // Log disconnection
           console.log("[-] Fireduino disconnected:", uid);
           // Remove uid from session
-          session.remove(uid);
+          if (session.remove(uid)) {
+            // Emit "fireduino_disconnect" event to the establishment
+            nsp.emit("fireduino_disconnect", session.getDevices());
+          }
+
           // Return
           return;
         }
@@ -82,18 +89,6 @@ fetchEstablishments((establishments) => {
       socket.on("get_online_fireduinos", () => {
         // Emit "get_online_fireduinos" event
         socket.emit("get_online_fireduinos", session.getDevices());
-      });
-
-      // Listen for add event
-      session.subscribe("fireduino_connect", () => {
-        // Emit "fireduino_connect" event to the establishment
-        nsp.emit("fireduino_connect", session.getDevices());
-      });
-
-      // Listen for remove event
-      session.subscribe("fireduino_disconnect", () => {
-        // Emit "fireduino_disconnect" event to the establishment
-        nsp.emit("fireduino_disconnect", session.getDevices());
       });
     });
   }
