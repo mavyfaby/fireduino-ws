@@ -1,0 +1,1 @@
+export const WebServerAPI = "https://fireduino.azurewebsites.net/ws";
