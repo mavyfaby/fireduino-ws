@@ -9,8 +9,8 @@ const isDev = process.argv.length > 0 && process.argv[0] === "--dev";
 const endpoint = isDev ? "http://localhost:5000" : "https://fireduino-ws.onrender.com";
 // Get establishment id
 const estb = prompt()(">> Enter establishment id: ");
-// Get serial id
-const uid = prompt()(">> Enter serial id: ");
+// Get MAC Address
+const uid = prompt()(">> Enter MAC Address: ");
 
 // Create socket.io client
 const socket = io(endpoint + "/estb" + estb);
