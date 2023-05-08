@@ -6,7 +6,7 @@ process.argv.splice(0, 2);
 // Check if we are in development mode
 const isDev = process.argv.length > 0 && process.argv[0] === "--dev";
 // Get endpoint
-const endpoint = isDev ? "http://localhost:5000" : "https://fireduino-ws.vercel.app";
+const endpoint = isDev ? "http://localhost:5000" : "https://fireduino-ws.onrender.com";
 // Get establishment id
 const estb = prompt()(">> Enter establishment id: ");
 // Get serial id
