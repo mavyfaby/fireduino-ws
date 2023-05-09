@@ -1,6 +1,8 @@
 import { io } from "socket.io-client";
 import prompt from "prompt-sync";
 
+import { Log } from "../src/utils";
+
 // Remove first two arguments
 process.argv.splice(0, 2);
 // Check if we are in development mode
@@ -11,24 +13,26 @@ const endpoint = isDev ? "http://localhost:5000" : "https://fireduino-ws.onrende
 const estb = prompt()(">> Enter establishment id: ");
 // Get MAC Address
 const uid = prompt()(">> Enter MAC Address: ");
+// Print line
+console.log("---------------------------");
 
 // Create socket.io client
 const socket = io(endpoint + "/estb" + estb);
 
 // Listen for "connect" event
 socket.on("connect", () => {
-    console.log("[+] Connected to server");
+    Log.s("Connected to server");
     socket.emit("fireduino", uid);
 });
 
 // Listen for "disconnect" event
 socket.on("disconnect", () => {
-    console.log("[-] Disconnected from server");
+    Log.e("Disconnected from server");
 });
 
 socket.on("connect_error", (err) => {
-    console.log("[-] Connection error: " + err.message);
+    Log.e("Connection error: " + err.message);
 });
 
 // Show message
-console.log("[+] Connecting to server...");
+Log.s("Connecting to server...");
