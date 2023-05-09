@@ -1,1 +1,1 @@
-export const WebServerAPI = "https://fireduino-api.vercel.app/ws";
+export const WebServerAPI = "https://fireduino.azurewebsites.net/ws";
