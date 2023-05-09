@@ -8,7 +8,7 @@ process.argv.splice(0, 2);
 // Check if we are in development mode
 const isDev = process.argv.length > 0 && process.argv[0] === "--dev";
 // Get endpoint
-const endpoint = isDev ? "http://localhost:5000" : "https://fireduino-ws.onrender.com";
+const endpoint = isDev ? "http://localhost:5000" : "https://fireduino-ws.azurewebsites.net";
 // Get establishment id
 const estb = prompt()(">> Enter establishment id: ");
 // Get MAC Address
