@@ -34,8 +34,10 @@ export class Session<T extends Device> {
   public add(estb: Establishment, device: T): boolean {
     // Check if uid is not already added
     if (!this.has(estb, device)) {
-      // Add device
-      this.devices.set(estb.id!, [ ...this.devices.get(estb.id!)!, device ]);
+      // Devices
+      const devices = this.devices.get(estb.id!) || [];
+      // Add device 
+      this.devices.set(estb.id!, [ ...devices, device ]);
       // Return true
       return true;
     }
@@ -50,8 +52,10 @@ export class Session<T extends Device> {
   public remove(estb: Establishment, device: T): boolean {
     // Check if uid is added
     if (this.has(estb, device)) {
+      // Devices
+      const devices = this.devices.get(estb.id!) || [];
       // Remove device
-      this.devices.set(estb.id!, this.devices.get(estb.id!)!.filter((d) => d !== device));
+      this.devices.set(estb.id!, devices.filter((d) => d !== device));
       // Return true
       return true;
     }
@@ -66,8 +70,10 @@ export class Session<T extends Device> {
    * @param sid Socket ID
    */
   public getUid(estb: Establishment, sid: string): string | null {
+    // Devices
+    const devices = this.devices.get(estb.id!) || [];
     // Get device by sid
-    const device = this.devices.get(estb.id!)!.find((device) => device.sid === sid);
+    const device = devices.find((device) => device.sid === sid);
 
     // If fireduino?
     if (this.isFireduino(device)) {
@@ -95,8 +101,10 @@ export class Session<T extends Device> {
     if (!estb.id) return false;
     // If has no devices
     if (!this.devices.has(estb.id)) return false;
+    // Devices
+    const devices = this.devices.get(estb.id) || [];
     // Return if device is in session
-    return this.devices.get(estb.id)!.some((d) => d.sid === device.sid);
+    return devices.some((d) => d.sid === device.sid);
   }
 
   /**
