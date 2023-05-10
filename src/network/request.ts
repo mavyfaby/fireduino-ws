@@ -1,5 +1,6 @@
 import { WebServerAPI } from "../config";
 import { Establishment } from "../types";
+import { Log } from "../utils";
 import axios from "axios";
 
 /**
@@ -11,7 +12,7 @@ export function fetchEstablishments(callback: (estb: Establishment[]) => void) {
     // If response 
     if (response.status === 200) {
       // Log success
-      console.log("[+] Establishments fetched");
+      Log.s("Establishments fetched");
       // Create empty array
       const estbs: Establishment[] = [];
 
@@ -35,7 +36,7 @@ export function fetchEstablishments(callback: (estb: Establishment[]) => void) {
     }
 
     // Log error
-    console.log("[-] Failed to fetch establishments: " + response.status);
-    console.log("[-] Stopping...");
+    Log.e("Failed to fetch establishments: " + response.status);
+    Log.e("Stopping...");
   });
 }

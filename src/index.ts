@@ -2,6 +2,7 @@ import { Server } from "socket.io";
 import { Session } from "./network/session";
 import { fetchEstablishments } from "./network/request";
 import { Fireduino, Mobile } from "./types";
+import { Log } from "./utils";
 
 // Create a socket.io server
 const io = new Server(3000);
@@ -13,7 +14,7 @@ const session = new Session<Fireduino>();
 const mobileSession = new Session<Mobile>();
 
 // Log fetch
-console.log("[+] Fetching establishments...");
+Log.s("Fetching establishments...");
 
 // Fetch establishments for socket namespacing
 fetchEstablishments((establishments) => {
@@ -27,7 +28,7 @@ fetchEstablishments((establishments) => {
       // Listen for "mobile" event
       socket.on("mobile", (platform: string) => {
         // Log connection
-        console.log("[+] Mobile connected:", platform);
+        Log.s("Mobile connected:", platform);
         // Add platform to session
         mobileSession.add(estb, { sid: socket.id, platform });
       });
@@ -35,7 +36,7 @@ fetchEstablishments((establishments) => {
       // Listen for "fireduino" event
       socket.on("fireduino", (mac) => {
         // Log connection
-        console.log("[+] Fireduino connected:", mac);
+        Log.s("Fireduino connected:", mac);
         // Add uid to session
         if (session.add(estb, { sid: socket.id, mac })) {
           // Emit "fireduino_connect" event to the establishment
@@ -59,7 +60,7 @@ fetchEstablishments((establishments) => {
         // Mobile disconnected
         if (mac === null && platform !== null) {
           // Log disconnection
-          console.log("[-] Mobile disconnected:", platform);
+          Log.e("Mobile disconnected: " + platform);
           // Remove platform from session
           mobileSession.remove(estb, { sid: socket.id, platform });
           // Return
@@ -69,7 +70,7 @@ fetchEstablishments((establishments) => {
         // Fireduino disconnected
         if (mac !== null && platform === null) {
           // Log disconnection
-          console.log("[-] Fireduino disconnected:", mac);
+          Log.e("Fireduino disconnected:", mac);
           // Remove uid from session
           if (session.remove(estb, { sid: socket.id, mac })) {
             // Emit "fireduino_disconnect" event to the establishment
@@ -81,7 +82,7 @@ fetchEstablishments((establishments) => {
         }
 
         // Log disconnection
-        console.log("[-] Unknown disconnected:", socket.id);
+        Log.e("Unknown disconnected:", socket.id);
         // Return
         return;
       });
@@ -97,5 +98,5 @@ fetchEstablishments((establishments) => {
   // Listen for connections
   io.listen(Number(port));
   // Show a message
-  console.log(`[+] Fireduino Websocket Server is listening on port ${port}`);
+  Log.s(`Fireduino Websocket Server is listening on port ${port}`);
 });

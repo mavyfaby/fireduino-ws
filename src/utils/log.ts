@@ -3,8 +3,8 @@ import { date } from "./date";
 /**
  * Log message
  */
-function log(message: string, isError: boolean) {
-  console.log("[" + (isError ? "-" : "+") + "] " + date() + " " + message);
+function log(isError: boolean, ...args: string[]) {
+  console.log("[" + (isError ? "-" : "+") + "] " + date() + " ", ...args);
 }
 
 /**
@@ -12,12 +12,12 @@ function log(message: string, isError: boolean) {
  */
 export const Log = {
   // Log success
-  s(message: string) {
-    log(message, false);
+  s(...args: string[]) {
+    log(false, ...args);
   },
 
   // Log error
-  e(message: string) {
-    log(message, true);
+  e(...args: string[]) {
+    log(true, ...args);
   }
 };

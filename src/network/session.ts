@@ -55,7 +55,7 @@ export class Session<T extends Device> {
       // Devices
       const devices = this.devices.get(estb.id!) || [];
       // Remove device
-      this.devices.set(estb.id!, devices.filter((d) => d !== device));
+      this.devices.set(estb.id!, devices.filter((d) => d.sid !== device.sid));
       // Return true
       return true;
     }
@@ -74,6 +74,9 @@ export class Session<T extends Device> {
     const devices = this.devices.get(estb.id!) || [];
     // Get device by sid
     const device = devices.find((device) => device.sid === sid);
+
+    // If device is null
+    if (!device) return null;
 
     // If fireduino?
     if (this.isFireduino(device)) {
