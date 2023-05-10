@@ -1,9 +1,13 @@
-export type SessionType = "mobile" | "fireduino";
-
 export type Device = {
-  type: SessionType;
-  socketId: string;
-  uid: string;
+  sid: string;
+}
+
+export type Fireduino = Device & {
+  mac: string;
+}
+
+export type Mobile = Device & {
+  platform: string;
 }
 
 export type Establishment = {

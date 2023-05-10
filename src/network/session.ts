@@ -1,60 +1,41 @@
-import type { Device, SessionType } from "../types";
+import type { Fireduino, Mobile, Establishment, Device } from "../types";
 
 /**
  * This class is used to store connected fireduino uids
+ * @author Maverick G. Fabroa (mavyfaby)
  */
-export class Session {
-  private static devices: Device[] = [];
-  private static mobileInstance: Session;
-  private static fireduinoInstance: Session;
-  private type: SessionType;
+export class Session<T extends Device> {
+  private devices: Map<number, T[]> = new Map();
 
-  private constructor(type: SessionType) {
-    this.type = type;
-  }
-
-  /**
-   * Get session instance
-   */
-  public static getInstance(type: SessionType): Session {
-    // If type is mobile
-    if (type === "mobile") {
-      // Check if instance is not created
-      if (!Session.mobileInstance) {
-        // Create instance
-        Session.mobileInstance = new Session("mobile");
-      }
-    }
-
-    // If type is fireduino
-    if (type === "fireduino") {
-      // Check if instance is not created
-      if (!Session.fireduinoInstance) {
-        // Create instance
-        Session.fireduinoInstance = new Session("fireduino");
-      }
-    }
-
-    // Return instance
-    return type === "mobile" ? Session.mobileInstance : Session.fireduinoInstance;
+  public constructor() {
+    // Do nothing
   }
 
   /**
    * Get all devices
+   * @param estb Establishment
    */
-  public getDevices(): Device[] {
-    // Return devices
-    return Session.devices.filter((device) => device.type === this.type);
+  public getDevices(estb: Establishment): T[] {
+    // If estb.id is null
+    if (!estb.id) return [];
+    // If has no devices
+    if (!this.devices.has(estb.id)) return [];
+    // If empty
+    if (this.devices.get(estb.id)!.length === 0) return [];
+    // Return devices of the establishment
+    return this.devices.get(estb.id)!;
   }
 
   /**
    * Add uid to session
+   * @param estb Establishment
+   * @param device T
    */
-  public add(socketId: string, uid: string): boolean {
+  public add(estb: Establishment, device: T): boolean {
     // Check if uid is not already added
-    if (!this.has(uid)) {
-      // Add uid
-      Session.devices.push({ type: this.type, socketId, uid });
+    if (!this.has(estb, device)) {
+      // Add device
+      this.devices.set(estb.id!, [ ...this.devices.get(estb.id!)!, device ]);
       // Return true
       return true;
     }
@@ -66,19 +47,11 @@ export class Session {
   /**
    * Remove uid from session
    */
-  public remove(uid: string): boolean {
+  public remove(estb: Establishment, device: T): boolean {
     // Check if uid is added
-    if (this.has(uid)) {
-      // For each device
-      for (const device of Session.devices) {
-        // If device type is not fireduino, continue
-        if (device.type !== "fireduino") continue;
-        // If device uid is not equal to uid, continue
-        if (device.uid !== uid) continue;
-        // Remove device
-        Session.devices.splice(Session.devices.indexOf(device), 1);
-      }
-      
+    if (this.has(estb, device)) {
+      // Remove device
+      this.devices.set(estb.id!, this.devices.get(estb.id!)!.filter((d) => d !== device));
       // Return true
       return true;
     }
@@ -89,19 +62,55 @@ export class Session {
 
   /**
    * Get socket id from uid
+   * @param estb Establishment
+   * @param sid Socket ID
    */
-  public getUid(socketId: string): string | null {
-    // Get uid
-    const device = Session.devices.find((device) => device.type === this.type && device.socketId === socketId);
-    // if device id is found, return it else return null
-    return device ? device.uid : null;
-  }
+  public getUid(estb: Establishment, sid: string): string | null {
+    // Get device by sid
+    const device = this.devices.get(estb.id!)!.find((device) => device.sid === sid);
+
+    // If fireduino?
+    if (this.isFireduino(device)) {
+      // Return mac
+      return device.mac;
+    }
+
+    // If mobile?
+    if (this.isMobile(device)) {
+      // Return platform
+      return device.platform;
+    }
+
+    // Return null
+    return null;
+  } 
 
   /**
    * Check if uid is in session
+   * @param estb Establishment
+   * @param mac MAC Address
    */
-  public has(uid: string): boolean {
-    // Check if uid is added
-    return Session.devices.some((device) => device.type === this.type && device.uid === uid);
+  public has(estb: Establishment, device: T): boolean {
+    // If estb.id is null
+    if (!estb.id) return false;
+    // If has no devices
+    if (!this.devices.has(estb.id)) return false;
+    // Return if device is in session
+    return this.devices.get(estb.id)!.some((d) => d.sid === device.sid);
+  }
+
+  /**
+   * Check if device is a Fireduino
+   * @param device 
+   */
+  private isFireduino(device: any): device is Fireduino {
+    return device.mac !== undefined;
+  }
+  
+  /**
+   * Check if device is a Mobile
+   */
+  private isMobile(device: any): device is Mobile {
+    return device.platform !== undefined;
   }
 }
