@@ -1,6 +1,6 @@
 {
   "name": "fireduino-ws",
-  "version": "1.0.0-pre.10",
+  "version": "1.0.0-pre.11",
   "description": "Fireduino Real-time TCP/IP Web Socket Server",
   "main": "dist/index.js",
   "scripts": {
@@ -30,7 +30,7 @@
     "socket.io": "^4.6.1"
   },
   "devDependencies": {
-    "@types/node": "^18.16.3",
+    "@types/node": "^20.1.4",
     "@types/prompt-sync": "^4.2.0",
     "prompt-sync": "^4.2.0",
     "socket.io-client": "^4.6.1",

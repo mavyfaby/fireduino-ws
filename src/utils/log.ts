@@ -4,7 +4,7 @@ import { date } from "./date";
  * Log message
  */
 function log(isError: boolean, ...args: string[]) {
-  console.log("[" + (isError ? "-" : "+") + "] " + date() + " ", ...args);
+  console.log("[" + (isError ? "-" : "+") + "] " + date(), ...args);
 }
 
 /**

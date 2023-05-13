@@ -65,7 +65,7 @@ export class Session<T extends Device> {
   }
 
   /**
-   * Get socket id from uid
+   * Get unique id from establsihment and socket id
    * @param estb Establishment
    * @param sid Socket ID
    */
