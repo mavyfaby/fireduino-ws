@@ -33,7 +33,7 @@ export class Session<T extends Device> {
    */
   public add(estb: Establishment, device: T): boolean {
     // Check if uid is not already added
-    if (!this.has(estb, device)) {
+    if (!this.hasSocketID(estb, device.sid)) {
       // Devices
       const devices = this.devices.get(estb.id!) || [];
       // Add device 
@@ -51,7 +51,7 @@ export class Session<T extends Device> {
    */
   public remove(estb: Establishment, device: T): boolean {
     // Check if uid is added
-    if (this.has(estb, device)) {
+    if (this.hasSocketID(estb, device.sid)) {
       // Devices
       const devices = this.devices.get(estb.id!) || [];
       // Remove device
@@ -95,11 +95,11 @@ export class Session<T extends Device> {
   } 
 
   /**
-   * Check if uid is in session
+   * Check if socket id is in session
    * @param estb Establishment
-   * @param mac MAC Address
+   * @param sid Socket ID
    */
-  public has(estb: Establishment, device: T): boolean {
+  public hasSocketID(estb: Establishment, sid: string): boolean {
     // If estb.id is null
     if (!estb.id) return false;
     // If has no devices
@@ -107,7 +107,23 @@ export class Session<T extends Device> {
     // Devices
     const devices = this.devices.get(estb.id) || [];
     // Return if device is in session
-    return devices.some((d) => d.sid === device.sid);
+    return devices.some((d) => d.sid === sid);
+  }
+
+  /**
+   * Check if uid is in session
+   * @param estb Establishment
+   * @param uid The Unique ID
+   */
+  public hasUID(estb: Establishment, uid: string): boolean {
+    // If estb.id is null
+    if (!estb.id) return false;
+    // If has no devices
+    if (!this.devices.has(estb.id)) return false;
+    // Devices
+    const devices = this.devices.get(estb.id) || [];
+    // Return if device is in session
+    return devices.some((d) => this.getUid(estb, d.sid) === uid);
   }
 
   /**

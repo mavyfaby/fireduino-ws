@@ -46,10 +46,16 @@ fetchEstablishments((establishments) => {
         }
       });
 
-      // Listen for "fireduino_chk" event
-      socket.on("fireduino_check", (uid) => {
+      // Listen for event
+      socket.on("fireduino_check", (mac) => {
         // Emit "fireduino_check" event
-        socket.emit("fireduino_check", session.has(estb, uid));
+        socket.emit("fireduino_check", session.hasUID(estb, mac));
+      });
+
+      // Listen for event
+      socket.on("exoduino_check", (mac) => {
+        // Emit "exoduino_check" event
+        socket.emit("exoduino_check", exos.some((exo) => exo.mac === mac));
       });
 
       // Listen for "disconnect" event
