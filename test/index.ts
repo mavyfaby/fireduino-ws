@@ -25,6 +25,17 @@ socket.on("connect", () => {
     socket.emit("fireduino", uid);
 });
 
+/**
+ * When the server emits this event,
+ * it means that the fireduino has been added to the establishment.
+ * 
+ * 1. Save the establishment id to the fireduino
+ * 2. Restart the fireduino socket server to apply changes
+ */
+socket.on("add_fireduino", estbID => {
+    console.log("Adding fireduino to establishment: ", estbID);
+});
+
 // Listen for "disconnect" event
 socket.on("disconnect", () => {
     Log.e("Disconnected from server");

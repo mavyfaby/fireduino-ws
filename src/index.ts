@@ -1,5 +1,6 @@
 import { Server } from "socket.io";
 import { Session } from "./network/session";
+import { Exoduinos } from "./network/exoduinos";
 import { fetchEstablishments } from "./network/request";
 import { Fireduino, Mobile } from "./types";
 import { Log } from "./utils";
@@ -13,7 +14,7 @@ const session = new Session<Fireduino>();
 // Create session for mobile
 const mobileSession = new Session<Mobile>();
 // Create session for fresh fireduinos
-let exos = <Fireduino[]>[];
+const exoduinos = new Exoduinos();
 
 // Log fetch
 Log.s("Fetching establishments...");
@@ -33,6 +34,12 @@ fetchEstablishments((establishments) => {
         Log.s("Mobile connected:", platform);
         // Add platform to session
         mobileSession.add(estb, { sid: socket.id, platform });
+
+        // Listen for event
+        socket.on("add_fireduino", (exoduino) => {
+          // Emit event to the specific exoduino device
+          io.to(exoduino.sid).emit("add_fireduino", estb.id);
+        });
       });
 
       // Listen for "fireduino" event
@@ -55,7 +62,7 @@ fetchEstablishments((establishments) => {
       // Listen for event
       socket.on("exoduino_check", (mac) => {
         // Emit "exoduino_check" event
-        socket.emit("exoduino_check", exos.some((exo) => exo.mac === mac));
+        socket.emit("exoduino_check", exoduinos.getSocketID(mac));
       });
 
       // Listen for "disconnect" event
@@ -104,7 +111,7 @@ fetchEstablishments((establishments) => {
       // Listen for event
       socket.on("get_exoduinos", () => {
         // Return exoduinos
-        socket.emit("get_exoduinos", exos);
+        socket.emit("get_exoduinos", exoduinos.getAll());
       });
     });
   }
@@ -114,24 +121,15 @@ fetchEstablishments((establishments) => {
     // Exoduino connects
     socket.on("fireduino", mac => {
       // Add exoduino to session
-      exos.push({ sid: socket.id, mac });
+      exoduinos.add({ sid: socket.id, mac });
       // Log connection
       Log.s("Exoduino connected:", mac);
     });
 
     // Call when an exoduino disconnects
     socket.on("disconnect", () => {
-      // Declare MAC
-      let mac = null;
-
       // Remove disconnected exoduino in the session
-      for (let i = 0; i < exos.length; i++) {
-        if (exos[i].sid === socket.id) {
-          mac = exos[i].mac;
-          exos.splice(i, 1);
-          break;
-        }
-      }
+      const mac = exoduinos.remove(socket.id);
 
       // Log disconnection
       if (mac !== null) {
