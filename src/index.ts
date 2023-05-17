@@ -5,13 +5,15 @@ import { Fireduino, Mobile } from "./types";
 import { Log } from "./utils";
 
 // Create a socket.io server
-const io = new Server(3000);
+const io = new Server();
 // Set port
 const port = process.env.PORT || 5000;
 // Create session for fireduino
 const session = new Session<Fireduino>();
 // Create session for mobile
 const mobileSession = new Session<Mobile>();
+// Create session for fresh fireduinos
+let exos = <Fireduino[]>[];
 
 // Log fetch
 Log.s("Fetching establishments...");
@@ -82,18 +84,59 @@ fetchEstablishments((establishments) => {
         }
 
         // Log disconnection
-        Log.e("Unknown disconnected:", socket.id);
+        Log.e("Namespace Unknown disconnected:", socket.id);
         // Return
         return;
       });
 
-      // Listen for "get_online_fireduinos" event
+      // Listen for event
       socket.on("get_online_fireduinos", () => {
-        // Emit "get_online_fireduinos" event
+        // Return online fireduinos
         socket.emit("get_online_fireduinos", session.getDevices(estb));
+      });
+
+      // Listen for event
+      socket.on("get_exoduinos", () => {
+        // Return exoduinos
+        socket.emit("get_exoduinos", exos);
       });
     });
   }
+
+  // Global socket connection
+  io.on("connection", (socket) => {
+    // Exoduino connects
+    socket.on("fireduino", mac => {
+      // Add exoduino to session
+      exos.push({ sid: socket.id, mac });
+      // Log connection
+      Log.s("Exoduino connected:", mac);
+    });
+
+    // Call when an exoduino disconnects
+    socket.on("disconnect", () => {
+      // Declare MAC
+      let mac = null;
+
+      // Remove disconnected exoduino in the session
+      for (let i = 0; i < exos.length; i++) {
+        if (exos[i].sid === socket.id) {
+          mac = exos[i].mac;
+          exos.splice(i, 1);
+          break;
+        }
+      }
+
+      // Log disconnection
+      if (mac !== null) {
+        Log.e("Exoduino disconnected:", mac);
+        return;
+      }
+
+      // Log disconnection
+      Log.e("Unknown disconnected:", socket.id);
+    });
+  });
 
   // Listen for connections
   io.listen(Number(port));

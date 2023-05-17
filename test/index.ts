@@ -17,7 +17,7 @@ const uid = prompt()(">> Enter MAC Address: ");
 console.log("---------------------------");
 
 // Create socket.io client
-const socket = io(endpoint + "/estb" + estb);
+const socket = io(endpoint + (estb === '-' ? '' : "/estb" + estb));
 
 // Listen for "connect" event
 socket.on("connect", () => {

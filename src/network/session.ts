@@ -5,10 +5,10 @@ import type { Fireduino, Mobile, Establishment, Device } from "../types";
  * @author Maverick G. Fabroa (mavyfaby)
  */
 export class Session<T extends Device> {
-  private devices: Map<number, T[]> = new Map();
+  private devices: Map<number, T[]>;
 
   public constructor() {
-    // Do nothing
+    this.devices = new Map();
   }
 
   /**
