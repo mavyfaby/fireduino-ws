@@ -6,7 +6,7 @@ import { Fireduino, Mobile } from "./types";
 import { Log } from "./utils";
 
 // Create a socket.io server
-const io = new Server();
+const io = new Server({ allowEIO3: true });
 // Set port
 const port = process.env.PORT || 5000;
 // Create session for fireduino
