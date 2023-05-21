@@ -32,18 +32,32 @@ export class Session<T extends Device> {
    * @param device T
    */
   public add(estb: Establishment, device: T): boolean {
-    // Check if uid is not already added
-    if (!this.hasSocketID(estb, device.sid)) {
-      // Devices
-      const devices = this.devices.get(estb.id!) || [];
-      // Add device 
-      this.devices.set(estb.id!, [ ...devices, device ]);
+    // Get devices
+    const devices = this.devices.get(estb.id!) || [];
+
+    // Check if has already same socket id
+    if (this.hasSocketID(estb, device.sid)) {
+      // Update device
+      this.devices.set(estb.id!, devices.map((d) => {
+        // If same socket id
+        if (d.sid === device.sid) {
+          // Return device
+          return device;
+        }
+
+        // Return device
+        return d;
+      }));
+
       // Return true
       return true;
     }
 
-    // Return false
-    return false;
+
+    // Otherwise, add device 
+    this.devices.set(estb.id!, [ ...devices, device ]);
+    // Return true
+    return true;
   }
 
   /**

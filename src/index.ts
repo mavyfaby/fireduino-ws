@@ -117,7 +117,7 @@ fetchEstablishments((establishments) => {
   }
 
   // Global socket connection
-  io.on("connection", (socket) => {
+  io.on("connection", (socket) => {    
     // Exoduino connects
     socket.on("fireduino", mac => {
       // Add exoduino to session
