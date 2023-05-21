@@ -40,6 +40,12 @@ fetchEstablishments((establishments) => {
           // Emit event to the specific exoduino device
           io.to(exoduino.sid).emit("add_fireduino", estb.id);
         });
+
+        // Listen for event
+        socket.on("fireduino_extinguish", (data) => {
+          // Emit event to the specific exoduino device
+          nsp.to(data.sid).emit("fireduino_extinguish", data.state);
+        });
       });
 
       // Listen for "fireduino" event
