@@ -57,6 +57,14 @@ fetchEstablishments((establishments) => {
           // Emit "fireduino_connect" event to the establishment
           nsp.emit("fireduino_connect", session.getDevices(estb));
         }
+
+        socket.on("fire_detected", () => {
+          nsp.emit("fire_detected", mac);
+        });
+  
+        socket.on("smoke_detected", () => {
+          nsp.emit("smoke_detected", mac);
+        });
       });
 
       // Listen for event

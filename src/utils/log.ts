@@ -8,6 +8,29 @@ function log(isError: boolean, ...args: string[]) {
 }
 
 /**
+ * Listen for key press
+ * @param callback 
+ */
+export function keyListen(callback: (key: string) => void) {
+  // Get stdin
+  const stdin = process.stdin;
+  stdin.setRawMode( true );
+
+  stdin.resume();
+  stdin.setEncoding( 'utf8' );
+
+  // on any data into stdin
+  stdin.on('data', function(key) {
+    // ctrl-c ( end of text )
+    if (key.toString() === '\u0003') {
+      process.exit();
+    }
+
+    callback(key.toString());
+  });
+}
+
+/**
  * Log object
  */
 export const Log = {

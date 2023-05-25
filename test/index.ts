@@ -1,7 +1,7 @@
 import { io } from "socket.io-client";
 import prompt from "prompt-sync";
 
-import { Log } from "../src/utils";
+import { Log, keyListen } from "../src/utils";
 
 // Remove first two arguments
 process.argv.splice(0, 2);
@@ -33,7 +33,12 @@ socket.on("connect", () => {
  * 2. Restart the fireduino socket server to apply changes
  */
 socket.on("add_fireduino", estbID => {
-    console.log("Adding fireduino to establishment: ", estbID);
+    Log.s("Adding fireduino to establishment: ", estbID);
+});
+
+// Listen for "fireduino_extinguish" event
+socket.on("fireduino_extinguish", (willExtinguish) => {
+    Log.s("Extinguishing fire: ", willExtinguish);
 });
 
 // Listen for "disconnect" event
@@ -43,6 +48,18 @@ socket.on("disconnect", () => {
 
 socket.on("connect_error", (err) => {
     Log.e("Connection error: " + err.message);
+});
+
+keyListen((key) => {
+    if (key === " ") {
+        console.log("Fire detected");
+        socket.emit("fire_detected");
+    } 
+
+    if (key === "1") {
+        console.log("Smoke detected");
+        socket.emit("smoke_detected");
+    } 
 });
 
 // Show message
