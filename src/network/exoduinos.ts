@@ -47,7 +47,6 @@ class Exoduinos {
    * Get the socket id based on the mac address
    */
   public getSocketID(mac: string) {
-    console.log("GEtting socket id: ", mac);
     // Iterate through the list
     for (let i = 0; i < this.list.length; i++) {
       // Check if the mac address matches

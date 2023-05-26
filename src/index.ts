@@ -16,6 +16,9 @@ const mobileSession = new Session<Mobile>();
 // Create session for fresh fireduinos
 const exoduinos = new Exoduinos();
 
+// WebServer Client Namespace
+const api = io.of("/api");
+
 // Log fetch
 Log.s("Fetching establishments...");
 
@@ -58,12 +61,20 @@ fetchEstablishments((establishments) => {
           nsp.emit("fireduino_connect", session.getDevices(estb));
         }
 
+        // Listen for event
         socket.on("fire_detected", () => {
-          nsp.emit("fire_detected", mac);
+          // Emit "fire_detected" event to the api server
+          api.emit("fire_detected", `${estb.id}_${mac}`);
+          // Emit "fire_detected" event to the establishment
+          nsp.emit("fire_detected", `${estb.id}_${mac}`);
         });
-  
+        
+        // Listen for event
         socket.on("smoke_detected", () => {
-          nsp.emit("smoke_detected", mac);
+          // Emit "smoke_detected" event to the api server
+          api.emit("smoke_detected", `${estb.id}_${mac}`);
+          // Emit "smoke_detected" event to the establishment
+          nsp.emit("smoke_detected", `${estb.id}_${mac}`);
         });
       });
 
@@ -154,6 +165,11 @@ fetchEstablishments((establishments) => {
       // Log disconnection
       Log.e("Unknown disconnected:", socket.id);
     });
+  });
+
+  // WebServer Client connection
+  api.on("connection", (socket) => {
+    Log.s("WebServer Client connected:", socket.id);
   });
 
   // Listen for connections
